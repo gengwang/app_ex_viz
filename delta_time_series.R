@@ -2,7 +2,11 @@ install.packages("wesanderson")
 library(wesanderson)
 library(gridExtra)
 library(dplyr)
-#library(purrr)
+library(statsr)
+library(ggplot2)
+library(purrr)
+library(zoo)
+library(scales)
 # Explore different statistics for describing changes of two time series, for example +20% from TA -> TB means .2 increase TA -> TB.
 
 randomNumbers <- function(len, mean=0, sd=1) {
@@ -16,25 +20,33 @@ pctChange <- function(x) {
   return (lead(x)/x - 1) * 100
 }
 
-wes_colors <- wes_palette(name="BottleRocket2")
+wes_colors <- wes_palette(name="BottleRocket1")
+color_primary = wes_colors[7]
+color_secondary = wes_colors[1]
 #font_family <- X11Font("-cronyx-helvetica-%s-%s-*-*-%d-*-*-*-*-*-*-*")
 font_family <- X11Font("-monotype-arial-%s-%s-*-*-%d-*-*-*-*-*-*-*")
 
 # Get an intuition of what percentage change looks like
 demo <- ts(c(-6:5), start=c(2019,1), deltat = 1/12)
-demo <- data.frame(y=as.matrix(demo), date=time(demo))
+demo <- data.frame(y=as.matrix(demo), date=as.Date(as.yearmon(time(demo))))
 demo <- demo %>% mutate(pct_change = pctChange(y))
 demo <- demo %>% mutate(pct_change = lag(pct_change))
-# Manually "shift" pct_change so it aligns with the delta
-demo <- demo %>% mutate(pct_change = head(append(0, demo$pct_change), -1))
+demo <- demo %>% mutate(pct_change_label = percent(pct_change))
 
 p_demo <- ggplot(data=demo, aes(x=date, y=y))+
-  geom_point(color=wes_colors[5])+
-  geom_line(aes(x=date, y=y), color=wes_colors[5])+
-  geom_point(aes(y=pct_change, color=wes_colors[3]))+
-  geom_line(aes(y=pct_change, color=wes_colors[3]))
+  geom_point(color=color_secondary)+
+  geom_line(aes(x=date, y=y), color=color_secondary)+
+  geom_point(aes(y=pct_change), color=color_primary)+
+  geom_line(aes(y=pct_change), color=color_primary)+
+  geom_hline(yintercept = 0, linetype="dashed", color=color_secondary)+
+  theme(legend.position = "none")+
+  ggtitle("Percentage Change Over Time")+
+  annotate(geom="point", x=as.Date("2019-08-01"), y=Inf, size=6, shape=21, fill="transparent", color=color_primary)+
+  geom_text(label=demo$y, vjust=2, color=color_secondary)+
+  geom_text(data=subset(demo, select=c(date, pct_change, pct_change_label)), aes(x=date, y=pct_change, label=pct_change_label, vjust=2), color=color_primary)
 
 p_demo
+############################################################################
 
 # Generate some data sets with the same mean (0) but variations
 len = round(289/2)*2
