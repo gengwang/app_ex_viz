@@ -53,6 +53,11 @@ sample.health_scores <- sample.health_scores %>% mutate(cls = bin_10_to_3(score)
 write.csv(sample.health_scores, './assets/001.csv', append = T)
 write.csv(sample.health_scores, './assets/health_scores.csv')
 
+# 12 clients by healh score (1:10)
+sample2.clients_by_health_scores <- data.frame(index=1:12, score=1:10 %>% sample(12, replace=T))
+sample2.clients_by_health_scores$score <-  c(6, 1, 1, 3, 7, 9, 5, 4, 9, 7, 1, 4)
+sample2.clients_by_health_scores$score %>% table()
+
 # # # # # # # # # # # # # # # # # # # # # # # 
 # visualization
 sample2.health_scores <- read.csv('./assets/health_scores_1.csv', stringsAsFactors = F)
@@ -61,3 +66,12 @@ p_score <- ggplot(data=sample2.health_scores, aes(x=time, y=score))+
   geom_line()
 ggplot(data=sample2.health_scores, aes(x=time, y=cls))+
   geom_point()
+# clients by health scores
+ggplot(sample2.clients_by_health_scores, aes(x=score))+
+       geom_histogram(bins = 10)
+ggsave('001.pdf',plot = last_plot(), device = NULL, path = NULL,
+       scale = 1, width = 248, height = 74, units = c("px"),
+       dpi = 300, limitsize = TRUE)
+
+
+
