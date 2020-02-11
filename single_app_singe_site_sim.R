@@ -4,6 +4,7 @@ library(ggplot2)
 library(purrr)
 # library(scales)
 # library(xts)
+library(jsonlite)
 
 # Sample size we need for our viz: sample very 5 min in two days
 score_range <- factor(c(1:10), ordered = TRUE)
@@ -73,5 +74,6 @@ ggsave('001.pdf',plot = last_plot(), device = NULL, path = NULL,
        scale = 1, width = 248, height = 74, units = c("px"),
        dpi = 300, limitsize = TRUE)
 
-
+json_health_o_t <- health_o_t %>% head(30) %>% jsonlite::toJSON()
+cat(json_health_o_t)
 
