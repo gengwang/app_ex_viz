@@ -15,7 +15,7 @@ health_o_t <- data.frame(score = score, time = t)
 health_o_t <- health_o_t %>% mutate(class = score %>% bin_10_to_3())
 health_o_t <- health_o_t[c('time', 'score', 'class')]
 
-# shatter an interger into several integers so that the sum of which equals the original number
+# Break an interger into a vector of several integers so that the sum of the latter equals the former
 # for example, shatter(577) may return c(190, 204, 183) 
 shatter <- function(x, size=3) {
   shatter <- sample(1:round(size), round(x), replace = T) %>% factor() %>%  summary()
