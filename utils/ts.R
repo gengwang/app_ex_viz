@@ -8,7 +8,7 @@ library(jsonlite)
 # t <- ts_dt_data(start = ISOdatetime(2020,1,30,0,0,0), end = ISOdatetime(2020,2,1,0,0,0), by=(60*5))
 # sample.size_total <- length(t)
 ts_dt_data <- function(start, end, by) {
-  seq(ISOdatetime(2020,1,30,0,0,0), ISOdatetime(2020,2,1,0,0,0), by=(60*5))
+  seq(ISOdatetime(2020,1,30,0,0,0), ISOdatetime(2020,2,1,0,0,0), by)
 }
 
 # Return a sequence of numbers ranging from 1 ~ 10
